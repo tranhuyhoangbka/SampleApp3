@@ -12,7 +12,7 @@
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><%= link_to "Profile", current_user %></li>
-                <li><%= link_to "Setting", '#' %></li>
+                <li><%= link_to "Setting", edit_user_path(current_user) %></li>
                 <div class="divider"></div>
                 <li><%= link_to 'Logout', logout_path, method: :delete %></li>
               </ul>
