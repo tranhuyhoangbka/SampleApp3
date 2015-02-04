@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   delete 'logout' => 'sessions#destroy'
 
   resources :users
+  resources :account_activations, only: [:edit]
+  resources :microposts, only: [:create, :destroy]
   get 'signup' => 'users#new'
 
   root 'static_pages#home'

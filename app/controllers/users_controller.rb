@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :user_logged_in, only: [:edit, :update, :index, :destroy]
+  before_action :logged_in_user, only: [:edit, :update, :index, :destroy]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy]
 
@@ -12,15 +12,16 @@ class UsersController < ApplicationController
   def create
   	@user = User.new(user_params)
   	if @user.save
-      log_in @user
-  		flash[:success] = "account is created!"
-  		redirect_to @user
+      UserMailer.account_activation(@user).deliver_now    
+  		flash[:success] = "Please check email to activate your account"
+  		redirect_to root_path
   	else
   		render 'new'
   	end
   end
   def show
   	@user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
   def edit
     @user = User.find(params[:id])
@@ -36,7 +37,7 @@ class UsersController < ApplicationController
   end
   def destroy
     User.find(params[:id]).destroy    
-    flash[:success] = "User deleted1"
+    flash[:success] = "User deleted"
     redirect_to users_url
   end
   
@@ -46,14 +47,6 @@ class UsersController < ApplicationController
 
   def user_params
   	params.require(:user).permit(:name, :email, :password, :password_confirmation)
-  end
-
-  def user_logged_in
-    unless logged_in?
-      store_location
-      flash[:warning] = "Please login"
-      redirect_to login_url
-    end
   end
 
   def correct_user    
